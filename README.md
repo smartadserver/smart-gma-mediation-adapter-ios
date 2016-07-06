@@ -1,4 +1,4 @@
-Smart AdServer - Google Ads Mobile SDK Adapter
+Smart AdServer - Google Ads Mobile Mediation Adapters
 ==============================================
 
 Introduction
@@ -17,5 +17,5 @@ You can declares _SDK Mediation Creatives_ in the _DFP_ interface. To setup the 
 
 More infos
 ----------
-You can find more informations about the _Smart AdServer iOS SDK_ and the _GADMAdapter_ in the official documentation:
+You can find more informations about the _Smart AdServer iOS SDK_ and the _Google Ads Mobile Mediation Adapters_ in the official documentation:
 http://help.smartadserver.com/en/
