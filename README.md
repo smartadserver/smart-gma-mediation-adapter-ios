@@ -8,7 +8,7 @@ The _Smart AdServer iOS SDK_ can be used through _Google Ads Mobile SDK (DFP)_ u
 Setup
 -----
 
-To start using the _Smart AdServer iOS SDK_ through DFP, simply add all the classes included in this repository in your project (**the Xcode projects needs to contain a correctly installed _Smart AdServer SDK_**).
+To start using the _Smart AdServer iOS SDK_ through DFP, simply add all the classes included in this repository in your project (**the Xcode project needs to contain a correctly installed _Smart AdServer iOS SDK_**).
 
 You can declares _SDK Mediation Creatives_ in the _DFP_ interface. To setup the _Custom Event_ (under _Ad networks_), you need to fill:
 
