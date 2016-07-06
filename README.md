@@ -1,4 +1,4 @@
-Smart AdServer - Google Ads Mobile Mediation Adapter for iOS
+Smart AdServer - Google Ads Mobile SDK Adapter for iOS
 ==============================================
 
 Introduction
