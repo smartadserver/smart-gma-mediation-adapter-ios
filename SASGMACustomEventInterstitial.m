@@ -1,26 +1,26 @@
 //
-//  SASGADCustomEventInterstitial.m
+//  SASGMACustomEventInterstitial.m
 //
 //  Created by Julien Gomez on 22/06/16.
 //  Copyright © 2016 Smart AdServer. All rights reserved.
 //
 
-#import "SASGADCustomEventInterstitial.h"
+#import "SASGMACustomEventInterstitial.h"
 #import "SASInterstitialView.h"
-#import "SASAdView+GAD.h"
+#import "SASAdView+GMA.h"
 
 
-@interface SASGADCustomEventInterstitial () <SASAdViewDelegate>
+@interface SASGMACustomEventInterstitial () <SASAdViewDelegate>
 
 @property(nonatomic, strong) SASInterstitialView *interstitialView;
 
 @end
 
-@implementation SASGADCustomEventInterstitial
+@implementation SASGMACustomEventInterstitial
 
 @synthesize delegate;
 
-#pragma mark GADCustomEventInterstitial implementation
+#pragma mark GMACustomEventInterstitial implementation
 
 - (void)requestInterstitialAdWithParameter:(NSString *)serverParameter
                                      label:(NSString *)serverLabel
@@ -31,6 +31,7 @@
     self.interstitialView =
     [[SASInterstitialView alloc] initWithFrame:rootViewController.view.bounds];
     self.interstitialView.delegate = self;
+    
     [self.interstitialView loadFormatWithDFPServerParameter:serverParameter request:request];
 
 }
@@ -57,11 +58,6 @@
 - (BOOL)adView:(SASAdView *)adView shouldHandleURL:(NSURL *)URL {
     [self.delegate customEventInterstitialWasClicked:self];
     return YES;
-}
-
-
-- (void)adView:(SASAdView *)adView willPerformActionWithExit:(BOOL)willExit {
-    [self.delegate customEventInterstitialWillLeaveApplication:self];
 }
 
 

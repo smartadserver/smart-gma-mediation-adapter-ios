@@ -1,26 +1,26 @@
 //
-//  SASGADCustomEventBanner.m
+//  SASGMACustomEventBanner.m
 //
 //  Created by Julien Gomez on 21/06/16.
 //  Copyright © 2016 Smart AdServer. All rights reserved.
 //
 
-#import "SASGADCustomEventBanner.h"
+#import "SASGMACustomEventBanner.h"
 #import "SASBannerView.h"
-#import "SASAdView+GAD.h"
+#import "SASAdView+GMA.h"
 
 
-@interface SASGADCustomEventBanner () <SASAdViewDelegate>
+@interface SASGMACustomEventBanner () <SASAdViewDelegate>
 
 @property(nonatomic, strong) SASBannerView *bannerView;
 
 @end
 
-@implementation SASGADCustomEventBanner
+@implementation SASGMACustomEventBanner
 
 @synthesize delegate;
 
-#pragma mark GADCustomEventBanner implementation
+#pragma mark GMACustomEventBanner implementation
 
 - (void)requestBannerAd:(GADAdSize)adSize
               parameter:(NSString *)serverParameter
@@ -28,8 +28,7 @@
                 request:(GADCustomEventRequest *)request {
 
     // Create the bannerView with the appropriate size.
-    self.bannerView =
-    [[SASBannerView alloc] initWithFrame:CGRectMake(0, 0, adSize.size.width, adSize.size.height)];
+    self.bannerView = [[SASBannerView alloc] initWithFrame:CGRectMake(0, 0, adSize.size.width, adSize.size.height)];
     self.bannerView.modalParentViewController = self.delegate.viewControllerForPresentingModalView;
     self.bannerView.delegate = self;
 
@@ -52,11 +51,6 @@
 - (BOOL)adView:(SASAdView *)adView shouldHandleURL:(NSURL *)URL {
     [self.delegate customEventBannerWasClicked:self];
     return YES;
-}
-
-
-- (void)adView:(SASAdView *)adView willPerformActionWithExit:(BOOL)willExit {
-    [self.delegate customEventBannerWillLeaveApplication:self];
 }
 
 

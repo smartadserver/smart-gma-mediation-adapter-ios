@@ -1,21 +1,21 @@
 //
-//  SASAdView+DFPMediation.m
+//  SASAdView+GMA.m
 //  DFPBannerExample
 //
 //  Created by Julien Gomez on 23/06/16.
 //  Copyright © 2016 Google. All rights reserved.
 //
 
-#import "SASAdView+GAD.h"
-#import "SASGADCustomEventConstants.h"
+#import "SASAdView+GMA.h"
+#import "SASGMACustomEventConstants.h"
 
 
-@implementation SASAdView (GAD)
+@implementation SASAdView (GMA)
 
 - (void)loadFormatWithDFPServerParameter:(NSString *)serverParameter request:(GADCustomEventRequest *)request {
 
     // Process placement ids
-    NSArray *stringComponents = [serverParameter componentsSeparatedByString:kSASGADCustomEventServerSeparatorString];
+    NSArray *stringComponents = [serverParameter componentsSeparatedByString:kSASGMACustomEventServerSeparatorString];
     NSInteger sid = 0;
     NSString *pid = nil;
     NSInteger fid = 0;
@@ -35,7 +35,7 @@
     NSString *tar = [request.userKeywords componentsJoinedByString:@";"];
 
     // Use location if available
-    if(request.userHasLocation) {
+    if (request.userHasLocation) {
         [SASAdView setLocation:[[CLLocation alloc] initWithLatitude:request.userLatitude longitude:request.userLongitude]];
     }
 
@@ -44,4 +44,5 @@
     [self loadFormatId:fid pageId:pid master:YES target:tar];
 
 }
+
 @end

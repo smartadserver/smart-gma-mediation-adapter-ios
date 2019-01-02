@@ -1,24 +1,33 @@
-Smart AdServer - Google Ads Mobile SDK Adapter for iOS
+Smart AdServer - Google Mobile Ads SDK Adapter
 ==============================================
 
 Introduction
 ------------
-The _Smart AdServer iOS SDK_ can be used through _Google Ads Mobile SDK (DFP)_ using the adapter provided in this repository for both _SASBannerView_ and _SASInterstitialView_.
-We'll be following the instructions provided by DFP [here](https://support.google.com/dfp_premium/answer/6238717?hl=en).
+The _Smart Display SDK_ can be used through _Google Mobile Ads SDK_ using the adapter provided in this repository for banner and interstitial. Those adapters are compatible with the _Smart Display SDK_ v6.10.
 
 Setup
 -----
 
-To start using the _Smart AdServer iOS SDK_ through DFP, simply add all the classes included in this repository in your project (**the Xcode project needs to contain a correctly installed _Smart AdServer iOS SDK_**).
+1) Install the _Google Mobile Ads SDK_ according to the official documentation https://developers.google.com/admob/ios/download.
 
-You can declares _SDK Mediation Creatives_ in the _DFP_ interface. Refer to the article [Add a new mobile creative](https://support.google.com/dfp_premium/answer/1209767) in Google DFP documentation for detailed instructions *Note: make sure to use "SDK Mediation" as the creative type. 
+2) Install the _Smart Display SDK_ by adding the _pod_ `SmartAdServer-DisplaySDK` to your app _Podfile_ (more info in [the documentation](http://help.smartadserver.com/ios/V6.10/#IntegrationGuides/InstallationCocoapods.htm)).
 
-To setup the _Custom Event_ (under _Ad networks_), you need to fill:
+3) Checkout this repository and copy the files you need into your Xcode Project:
 
-* the _Parameter_ field: set your _Smart AdServer_ IDs using slash separator `[siteID]/[pageID]/[formatID]`
-* the _Class Name_ field: set `SASGADCustomEventBanner` for banners and `SASGADCustomEventInterstitial` for interstitials
+- `SASGMACustomEventConstants.h` in any cases.
+- `SASAdView+GMA` in any cases.
+- `SASGMACustomEventBanner` for banner ads.
+- `SASGMACustomEventInterstitial` for interstitial ads.
+
+4) Edit the `SASGMACustomEventConstants.h` header and replace the default base URL with your dedicated base URL.
+
+5) You can now declare _SDK Mediation Creatives_ in the _Google Mobile Ads_ interface. To setup the _Custom Event_ (under _Ad networks_), you need to fill:
+
+- the _Parameter_ field: set your _Smart AdServer_ IDs using slash separator `[siteID]/[pageID]/[formatID]`
+- the _Class Name_ field: set `SASGADCustomEventBanner` for banners or `SASGADCustomEventInterstitial` for interstitials.
+
 
 More infos
 ----------
-You can find more informations about the _Smart AdServer iOS SDK_ and the _Google Ads Mobile Mediation Adapters_ in the official documentation:
-http://help.smartadserver.com/en/
+You can find more informations about the _Smart Display SDK_ and the _Google Mobile Ads SDK_ in the official documentation:
+http://documentation.smartadserver.com/displaySDK

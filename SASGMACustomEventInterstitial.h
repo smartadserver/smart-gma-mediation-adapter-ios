@@ -1,5 +1,5 @@
 //
-//  SASGADCustomEventInterstitial.h
+//  SASGMACustomEventInterstitial.h
 //
 //  Created by Julien Gomez on 22/06/16.
 //  Copyright © 2016 Smart AdServer. All rights reserved.
@@ -9,6 +9,6 @@
 #import <GoogleMobileAds/GoogleMobileAds.h>
 
 
-@interface SASGADCustomEventInterstitial : NSObject<GADCustomEventInterstitial>
+@interface SASGMACustomEventInterstitial : NSObject<GADCustomEventInterstitial>
 
 @end
