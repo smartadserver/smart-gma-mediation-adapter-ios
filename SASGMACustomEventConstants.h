@@ -2,8 +2,12 @@
 //  SASGMACustomEventConstants.h
 //
 //  Created by Julien Gomez on 27/06/16.
-//  Copyright © 2016 Smart AdServer. All rights reserved.
+//  Copyright © 2018 Smart AdServer. All rights reserved.
 //
 
-#define kSASBaseURLString                       @"https://mobile.smartadserver.com"
-#define kSASGMACustomEventServerSeparatorString @"/"
+#define kSASAdapterVersion                          @"1"
+#define kSASBaseURLString                           @"https://mobile.smartadserver.com"
+#define kSASGMACustomEventServerSeparatorString     @"/"
+
+#define kSASGMAErrorDomain                          @"kSASGMAErrorDomain"
+#define kSASGMAErrorCodeInvalidServerParameters     100

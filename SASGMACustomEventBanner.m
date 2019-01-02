@@ -2,15 +2,17 @@
 //  SASGMACustomEventBanner.m
 //
 //  Created by Julien Gomez on 21/06/16.
-//  Copyright © 2016 Smart AdServer. All rights reserved.
+//  Copyright © 2018 Smart AdServer. All rights reserved.
 //
 
 #import "SASGMACustomEventBanner.h"
-#import "SASBannerView.h"
-#import "SASAdView+GMA.h"
+#import <SASDisplayKit/SASDisplayKit.h>
+#import "SASGMACustomEventConstants.h"
+#import "SASGMAUtils.h"
 
+NS_ASSUME_NONNULL_BEGIN
 
-@interface SASGMACustomEventBanner () <SASAdViewDelegate>
+@interface SASGMACustomEventBanner () <SASBannerViewDelegate>
 
 @property(nonatomic, strong) SASBannerView *bannerView;
 
@@ -23,44 +25,56 @@
 #pragma mark GMACustomEventBanner implementation
 
 - (void)requestBannerAd:(GADAdSize)adSize
-              parameter:(NSString *)serverParameter
-                  label:(NSString *)serverLabel
+              parameter:(nullable NSString *)serverParameter
+                  label:(nullable NSString *)serverLabel
                 request:(GADCustomEventRequest *)request {
-
-    // Create the bannerView with the appropriate size.
-    self.bannerView = [[SASBannerView alloc] initWithFrame:CGRectMake(0, 0, adSize.size.width, adSize.size.height)];
-    self.bannerView.modalParentViewController = self.delegate.viewControllerForPresentingModalView;
-    self.bannerView.delegate = self;
-
-    [self.bannerView loadFormatWithDFPServerParameter:serverParameter request:request];
+    
+    // Placement parsing from the server string
+    SASAdPlacement *adPlacement = [SASGMAUtils placementWithDFPServerParameter:serverParameter request:request];
+    
+    if (adPlacement != nil) {
+        
+        // Create the bannerView with the appropriate size
+        self.bannerView = [[SASBannerView alloc] initWithFrame:CGRectMake(0, 0, adSize.size.width, adSize.size.height)];
+        self.bannerView.modalParentViewController = self.delegate.viewControllerForPresentingModalView;
+        self.bannerView.delegate = self;
+        
+        // Load the previously retrieved ad placement
+        [self.bannerView loadWithPlacement:adPlacement];
+        
+    } else {
+        
+        // Placement is invalid, sending an error
+        NSError *error = [NSError errorWithDomain:kSASGMAErrorDomain code:kSASGMAErrorCodeInvalidServerParameters userInfo:nil];
+        [self.delegate customEventBanner:self didFailAd:error];
+        
+    }
 
 }
 
 #pragma mark SASAdViewDelegate implementation
 
-- (void)adViewDidLoad:(SASAdView *)adView {
-    [self.delegate customEventBanner:self didReceiveAd:adView];
+- (void)bannerViewDidLoad:(SASBannerView *)bannerView {
+    [self.delegate customEventBanner:self didReceiveAd:bannerView];
 }
 
-
-- (void)adView:(SASAdView *)adView didFailToLoadWithError:(NSError *)error {
+- (void)bannerView:(SASBannerView *)bannerView didFailToLoadWithError:(NSError *)error {
     [self.delegate customEventBanner:self didFailAd:error];
 }
 
-
-- (BOOL)adView:(SASAdView *)adView shouldHandleURL:(NSURL *)URL {
+- (BOOL)bannerView:(SASBannerView *)bannerView shouldHandleURL:(NSURL *)URL {
     [self.delegate customEventBannerWasClicked:self];
     return YES;
 }
 
-
-- (void)adViewWillPresentModalView:(SASAdView *)adView {
+- (void)bannerViewWillPresentModalView:(SASBannerView *)bannerView {
     [self.delegate customEventBannerWillPresentModal:self];
 }
 
-
-- (void)adViewWillDismissModalView:(SASAdView *)adView {
+- (void)bannerViewWillDismissModalView:(SASBannerView *)bannerView {
     [self.delegate customEventBannerWillDismissModal:self];
 }
 
 @end
+
+NS_ASSUME_NONNULL_END
