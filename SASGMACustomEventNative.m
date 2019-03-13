@@ -205,13 +205,13 @@ NS_ASSUME_NONNULL_BEGIN
                              adTypes:(NSArray *)adTypes
                              options:(NSArray *)options
                   rootViewController:(UIViewController *)rootViewController {
-    
+    id<GADCustomEventNativeAdDelegate> dlg = self.delegate;
     // Checking the native ad type and triggering error if not supported
     if (![adTypes containsObject:kGADAdLoaderAdTypeUnifiedNative]) {
         NSString *description = @"You must request the unified native ad format!";
         NSDictionary *userInfo = @{NSLocalizedDescriptionKey : description, NSLocalizedFailureReasonErrorKey : description};
         NSError *error = [NSError errorWithDomain:@"com.google.mediation.sample" code:0 userInfo:userInfo];
-        [self.delegate customEventNativeAd:self didFailToLoadWithError:error];
+        [dlg customEventNativeAd:self didFailToLoadWithError:error];
 
         return;
     }
@@ -232,7 +232,7 @@ NS_ASSUME_NONNULL_BEGIN
                 [self processAd:ad request:request];
             } else {
                 // Reporting ad loading failure to the primary SDK
-                [self.delegate customEventNativeAd:self didFailToLoadWithError:error];
+                [dlg customEventNativeAd:self didFailToLoadWithError:error];
             }
             
         }];
@@ -241,7 +241,7 @@ NS_ASSUME_NONNULL_BEGIN
 
         // Placement is invalid, sending an error
         NSError *error = [NSError errorWithDomain:kSASGMAErrorDomain code:kSASGMAErrorCodeInvalidServerParameters userInfo:nil];
-        [self.delegate customEventNativeAd:self didFailToLoadWithError:error];
+        [dlg customEventNativeAd:self didFailToLoadWithError:error];
 
     }
     
@@ -259,10 +259,11 @@ NS_ASSUME_NONNULL_BEGIN
     // Converting Smart native ad into a GMA unified native ad
     self.mediatedNativeAd = [[SASMediatedNativeAd alloc] initWithNativeAd:nativeAd];
     [self.mediatedNativeAd fetchAssetsIfNeededWithCompletionHandler:^(NSError * _Nullable error) {
+        id<GADCustomEventNativeAdDelegate> dlg = self.delegate;
         if (error) {
-            [self.delegate customEventNativeAd:self didFailToLoadWithError:error];
+            [dlg customEventNativeAd:self didFailToLoadWithError:error];
         } else {
-            [self.delegate customEventNativeAd:self didReceiveMediatedUnifiedNativeAd:self.mediatedNativeAd];
+            [dlg customEventNativeAd:self didReceiveMediatedUnifiedNativeAd:self.mediatedNativeAd];
         }
     }];
 }

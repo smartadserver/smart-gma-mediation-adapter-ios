@@ -6,7 +6,7 @@
 //
 
 #define kSASAdapterVersion                          @"1"
-#define kSASBaseURLString                           @"https://mobile.smartadserver.com"
+//#define kSASBaseURLString                           @"https://mobile.smartadserver.com" // add kSASBaseURLString='@"https://mobile.smartadserver.com"' to your GCC_PREPROCESSOR_DEFINITIONS in your target's Build Settings
 #define kSASGMACustomEventServerSeparatorString     @"/"
 
 #define kSASGMAErrorDomain                          @"kSASGMAErrorDomain"

@@ -106,8 +106,9 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)rewardedVideoManager:(SASRewardedVideoManager *)manager didAppearFromViewController:(UIViewController *)viewController {
-    [self.delegate willPresentFullScreenView];
-    [self.delegate reportImpression];
+    id<GADMediationRewardedAdEventDelegate> dlg = self.delegate;
+    [dlg willPresentFullScreenView];
+    [dlg reportImpression];
 }
 
 - (void)rewardedVideoManager:(SASRewardedVideoManager *)manager didDisappearFromViewController:(UIViewController *)viewController {
