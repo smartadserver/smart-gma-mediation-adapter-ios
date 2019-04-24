@@ -25,7 +25,7 @@ Setup
 5) You can now declare _SDK Mediation Creatives_ in the _Google Mobile Ads_ interface. To setup the _Custom Event_ (under _Ad networks_), you need to fill:
 
 - the _Parameter_ field: set your _Smart AdServer_ IDs using slash separator `[siteID]/[pageID]/[formatID]`
-- the _Class Name_ field: set `SASGADCustomEventBanner` for banners, `SASGADCustomEventInterstitial` for interstitials or `SASGMARewardedAdapter` for rewarded videos.
+- the _Class Name_ field: set `SASGMACustomEventBanner` for banners, `SASGMACustomEventInterstitial` for interstitials or `SASGMARewardedAdapter` for rewarded videos.
 
 
 More infos
