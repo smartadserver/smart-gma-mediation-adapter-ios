@@ -10,7 +10,7 @@ Setup
 
 1) Install the _Google Mobile Ads SDK_ according to the official documentation https://developers.google.com/admob/ios/download.
 
-2) Install the _Smart Display SDK_ by adding the _pod_ `Smart-Display-SDK` to your app _Podfile_ (more info in [the documentation](http://documentation.smartadserver.com/displaySDK/ios/gettingstarted.html)).
+2) Install the _Smart Display SDK_ by adding the _pod_ `Smart-Display-SDK` to your app _Podfile_ (more info in [the documentation](https://documentation.smartadserver.com/displaySDK/ios/gettingstarted.html)).
 
 3) Checkout this repository and copy the files you need into your Xcode Project:
 
@@ -20,7 +20,7 @@ Setup
 - `SASGMACustomEventInterstitial` for interstitial ads.
 - `SASGMARewardedAdapter` for rewarded video ads.
 
-4) Edit the `SASGMACustomEventConstants.h` header and replace the default base URL with your dedicated base URL.
+4) Only for Smart AdServer SDK version < v7.6, edit the `SASGMACustomEventConstants.h` header and change the `kSASBaseURLString` value with the domain assigned to your Smart's Manage Network.
 
 5) You can now declare _SDK Mediation Creatives_ in the _Google Mobile Ads_ interface. To setup the _Custom Event_ (under _Ad networks_), you need to fill:
 
@@ -31,4 +31,4 @@ Setup
 More infos
 ----------
 You can find more informations about the _Smart Display SDK_ and the _Google Mobile Ads SDK_ in the official documentation:
-http://documentation.smartadserver.com/displaySDK
+https://documentation.smartadserver.com/displaySDK
