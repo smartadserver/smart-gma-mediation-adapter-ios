@@ -20,7 +20,7 @@ Setup
 - `SASGMACustomEventInterstitial` for interstitial ads.
 - `SASGMARewardedAdapter` for rewarded video ads.
 
-4) Only for Smart AdServer SDK version < v7.6, edit the `SASGMACustomEventConstants.h` header and change the `kSASBaseURLString` value with the domain assigned to your Smart's Manage Network.
+4) Only for _Smart Display SDK_ version < v7.6, edit the `SASGMACustomEventConstants.h` header and replace the `kSASBaseURLString` value with the domain assigned to your Smart's Manage Network.
 
 5) You can now declare _SDK Mediation Creatives_ in the _Google Mobile Ads_ interface. To setup the _Custom Event_ (under _Ad networks_), you need to fill:
 
