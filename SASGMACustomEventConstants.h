@@ -11,3 +11,5 @@
 
 #define kSASGMAErrorDomain                          @"kSASGMAErrorDomain"
 #define kSASGMAErrorCodeInvalidServerParameters     100
+#define kSASGMAErrorCodeCannotFetchNativeAdAssets   101
+

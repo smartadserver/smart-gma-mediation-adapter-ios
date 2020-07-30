@@ -19,6 +19,7 @@ Setup
 - `SASGMACustomEventBanner` for banner ads.
 - `SASGMACustomEventInterstitial` for interstitial ads.
 - `SASGMARewardedAdapter` for rewarded video ads.
+- `SASGMACustomEventNative` for native ads ads.
 
 4) Only for _Smart Display SDK_ version < v7.6, edit the `SASGMACustomEventConstants.h` header and replace the `kSASBaseURLString` value with the domain assigned to your Smart's Manage Network.
 
@@ -27,6 +28,10 @@ Setup
 - the _Parameter_ field: set your _Smart AdServer_ IDs using slash separator `[siteID]/[pageID]/[formatID]`
 - the _Class Name_ field: set `SASGMACustomEventBanner` for banners, `SASGMACustomEventInterstitial` for interstitials or `SASGMARewardedAdapter` for rewarded videos.
 
+Known issue
+-----------
+
+- `SASGMARewardedAdapter` is only compatible with the `GADRewardBasedVideoAd` (which is deprecated by Google) at the moment.
 
 More infos
 ----------
