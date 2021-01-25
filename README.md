@@ -28,11 +28,6 @@ Setup
 - the _Parameter_ field: set your _Smart AdServer_ IDs using slash separator `[siteID]/[pageID]/[formatID]`
 - the _Class Name_ field: set `SASGMACustomEventBanner` for banners, `SASGMACustomEventInterstitial` for interstitials or `SASGMARewardedAdapter` for rewarded videos.
 
-Known issue
------------
-
-- `SASGMARewardedAdapter` is only compatible with the `GADRewardBasedVideoAd` (which is deprecated by Google) at the moment.
-
 More infos
 ----------
 You can find more informations about the _Smart Display SDK_ and the _Google Mobile Ads SDK_ in the official documentation:

@@ -54,6 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     // Setting the base URL and the site ID
     [[SASConfiguration sharedInstance] configureWithSiteId:sid];
+    [[SASConfiguration sharedInstance] setPrimarySDK:NO];
     
     // Ad placement instantiation
     return [SASAdPlacement adPlacementWithSiteId:sid pageName:pid formatId:fid keywordTargeting:tar];

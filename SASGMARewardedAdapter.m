@@ -12,12 +12,28 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#pragma mark - Rewarded video manager extension
+
+@interface SASRewardedVideoManager (GADMediationRewardedAd) <GADMediationRewardedAd>
+
+@end
+
+@implementation SASRewardedVideoManager (GADMediationRewardedAd)
+
+- (void)presentFromViewController:(nonnull UIViewController *)viewController {
+    [self showFromViewController:viewController];
+}
+
+@end
+
+#pragma mark - Main adapter class
+
 @interface SASGMARewardedAdapter () <SASRewardedVideoManagerDelegate>
 
-@property (nonatomic, weak) id<GADMRewardBasedVideoAdNetworkConnector> connector;
-@property (nonatomic, strong) NSString *serverParameter;
-
 @property (nonatomic, strong, nullable) SASRewardedVideoManager *rewardedVideoManager;
+
+@property (nonatomic, copy, nullable) GADMediationRewardedLoadCompletionHandler loadCompletionHandler;
+@property (nonatomic, weak, nullable) id<GADMediationRewardedAdEventDelegate> delegate;
 
 @end
 
@@ -25,88 +41,87 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Adapter lifecycle
 
-- (instancetype)initWithRewardBasedVideoAdNetworkConnector:(id<GADMRewardBasedVideoAdNetworkConnector>)connector {
-    if (self = [super init]) {
-        self.connector = connector;
-        self.serverParameter = [[connector credentials] objectForKey:@"parameter"];
-    }
-    
-    return self;
-}
-
-- (void)setUp {
-    // Nothing to setup here
-    [self.connector adapterDidSetUpRewardBasedVideoAd:self];
-}
-
-- (void)stopBeingDelegate {
-    self.rewardedVideoManager = nil;
-}
-
-#pragma mark - Rewarded requesting & presentation
-
-- (void)requestRewardBasedVideoAd {
-    // Placement parsing from the server string
-    SASAdPlacement *adPlacement = [SASGMAUtils placementWithDFPServerParameter:self.serverParameter request:nil];
+- (void)loadRewardedAdForAdConfiguration:(nonnull GADMediationRewardedAdConfiguration *)adConfiguration
+                       completionHandler:(nonnull GADMediationRewardedLoadCompletionHandler)completionHandler {
+    SASAdPlacement *adPlacement = [SASGMAUtils placementWithDFPServerParameter:adConfiguration.credentials.settings[@"parameter"] request:nil];
     
     if (adPlacement != nil) {
+        self.loadCompletionHandler = completionHandler;
         
         // Instantiating a rewarded manager and loading a rewarded video from it
         self.rewardedVideoManager = [[SASRewardedVideoManager alloc] initWithPlacement:adPlacement delegate:self];
         [self.rewardedVideoManager load];
-        
     } else {
-        
         // Placement is invalid, sending an error
         NSError *error = [NSError errorWithDomain:kSASGMAErrorDomain code:kSASGMAErrorCodeInvalidServerParameters userInfo:nil];
-        [self.connector adapter:self didFailToLoadRewardBasedVideoAdwithError:error];
-        
+        completionHandler(nil, error);
     }
+    
 }
 
-- (void)presentRewardBasedVideoAdWithRootViewController:(UIViewController *)viewController {
-    if (self.rewardedVideoManager.adStatus == SASAdStatusReady) {
-        // Showing the rewarded video if ready
-        [self.rewardedVideoManager showFromViewController:viewController];
+
+- (void)loadRewardedInterstitialAdForAdConfiguration:(nonnull GADMediationRewardedAdConfiguration *)adConfiguration
+                                   completionHandler:(nonnull GADMediationRewardedLoadCompletionHandler)completionHandler {
+    SASAdPlacement *adPlacement = [SASGMAUtils placementWithDFPServerParameter:adConfiguration.credentials.settings[@"parameter"] request:nil];
+    
+    if (adPlacement != nil) {
+        self.loadCompletionHandler = completionHandler;
+        
+        // Instantiating a rewarded manager and loading a rewarded video from it
+        self.rewardedVideoManager = [[SASRewardedVideoManager alloc] initWithPlacement:adPlacement delegate:self];
+        [self.rewardedVideoManager load];
+    } else {
+        // Placement is invalid, sending an error
+        NSError *error = [NSError errorWithDomain:kSASGMAErrorDomain code:kSASGMAErrorCodeInvalidServerParameters userInfo:nil];
+        completionHandler(nil, error);
     }
 }
 
 #pragma mark - Misc adapter methods
 
-+ (NSString *)adapterVersion {
-    return kSASAdapterVersion;
++ (nullable Class<GADAdNetworkExtras>)networkExtrasClass {
+    return nil;
 }
 
-+ (Class<GADAdNetworkExtras>)networkExtrasClass {
-    return nil;
++ (GADVersionNumber)adSDKVersion {
+    GADVersionNumber version;
+    version.majorVersion = 7;
+    return version;
+}
+
++ (GADVersionNumber)version {
+    GADVersionNumber version;
+    version.majorVersion = 1;
+    return version;
 }
 
 #pragma mark - Rewarded video manager delegate
 
 - (void)rewardedVideoManager:(SASRewardedVideoManager *)manager didLoadAd:(SASAd *)ad {
-    [self.connector adapterDidReceiveRewardBasedVideoAd:self];
+    self.delegate = self.loadCompletionHandler(self.rewardedVideoManager, nil);
 }
 
 - (void)rewardedVideoManager:(SASRewardedVideoManager *)manager didFailToLoadWithError:(NSError *)error {
-    [self.connector adapter:self didFailToLoadRewardBasedVideoAdwithError:error];
+    self.loadCompletionHandler(nil, error);
 }
 
 - (void)rewardedVideoManager:(SASRewardedVideoManager *)manager didAppearFromViewController:(UIViewController *)viewController {
-    [self.connector adapterDidOpenRewardBasedVideoAd:self];
+    [self.delegate willPresentFullScreenView];
+    [self.delegate reportImpression];
 }
 
 - (void)rewardedVideoManager:(SASRewardedVideoManager *)manager didDisappearFromViewController:(UIViewController *)viewController {
-    [self.connector adapterDidCloseRewardBasedVideoAd:self];
+    [self.delegate willDismissFullScreenView];
 }
 
 - (void)rewardedVideoManager:(SASRewardedVideoManager *)manager didCollectReward:(SASReward *)reward {
     GADAdReward *gadReward = [[GADAdReward alloc] initWithRewardType:reward.currency
                                                         rewardAmount:[NSDecimalNumber decimalNumberWithDecimal:[reward.amount decimalValue]]];
-    [self.connector adapter:self didRewardUserWithReward:gadReward];
+    [self.delegate didRewardUserWithReward:gadReward];
 }
 
 - (BOOL)rewardedVideoManager:(SASRewardedVideoManager *)manager shouldHandleURL:(NSURL *)URL {
-    [self.connector adapterDidGetAdClick:self];
+    [self.delegate reportClick];
     return YES;
 }
 

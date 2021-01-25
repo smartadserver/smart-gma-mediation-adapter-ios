@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SASGMARewardedAdapter : NSObject <GADMRewardBasedVideoAdNetworkAdapter>
+@interface SASGMARewardedAdapter : NSObject <GADMediationAdapter>
 
 @end
 
