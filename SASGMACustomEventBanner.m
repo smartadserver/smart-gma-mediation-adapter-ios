@@ -31,12 +31,13 @@ NS_ASSUME_NONNULL_BEGIN
     
     // Placement parsing from the server string
     SASAdPlacement *adPlacement = [SASGMAUtils placementWithDFPServerParameter:serverParameter request:request];
+    id<GADCustomEventBannerDelegate> dlg = self.delegate;
     
     if (adPlacement != nil) {
         
         // Create the bannerView with the appropriate size
         self.bannerView = [[SASBannerView alloc] initWithFrame:CGRectMake(0, 0, adSize.size.width, adSize.size.height)];
-        self.bannerView.modalParentViewController = self.delegate.viewControllerForPresentingModalView;
+        self.bannerView.modalParentViewController = dlg.viewControllerForPresentingModalView;
         self.bannerView.delegate = self;
         
         // Load the previously retrieved ad placement
@@ -46,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
         
         // Placement is invalid, sending an error
         NSError *error = [NSError errorWithDomain:kSASGMAErrorDomain code:kSASGMAErrorCodeInvalidServerParameters userInfo:nil];
-        [self.delegate customEventBanner:self didFailAd:error];
+        [dlg customEventBanner:self didFailAd:error];
         
     }
 
