@@ -3,7 +3,7 @@ Smart AdServer - Google Mobile Ads SDK Adapter
 
 Introduction
 ------------
-The _Smart Display SDK_ can be used through _Google Mobile Ads SDK_ using the adapter provided in this repository for banner, interstitial and rewarded video. Those adapters are compatible with the _Smart Display SDK_ v7.0.
+The _Smart Display SDK_ can be used through _Google Mobile Ads SDK_ using the adapter provided in this repository for banner, interstitial and rewarded video. Those adapters are compatible with the _Smart Display SDK_ v7.14.
 
 Setup
 -----
@@ -14,19 +14,35 @@ Setup
 
 3) Checkout this repository and copy the files you need into your Xcode Project:
 
-- `SASGMACustomEventConstants.h` in any cases.
 - `SASGMAUtils` in any cases.
 - `SASGMACustomEventBanner` for banner ads.
 - `SASGMACustomEventInterstitial` for interstitial ads.
 - `SASGMARewardedAdapter` for rewarded video ads.
 - `SASGMACustomEventNative` for native ads ads.
 
-4) Only for _Smart Display SDK_ version < v7.6, edit the `SASGMACustomEventConstants.h` header and replace the `kSASBaseURLString` value with the domain assigned to your Smart's Manage Network.
-
-5) You can now declare _SDK Mediation Creatives_ in the _Google Mobile Ads_ interface. To setup the _Custom Event_ (under _Ad networks_), you need to fill:
+4) You can now declare _SDK Mediation Creatives_ in the _Google Mobile Ads_ interface. To setup the _Custom Event_ (under _Ad networks_), you need to fill:
 
 - the _Parameter_ field: set your _Smart AdServer_ IDs using slash separator `[siteID]/[pageID]/[formatID]`
 - the _Class Name_ field: set `SASGMACustomEventBanner` for banners, `SASGMACustomEventInterstitial` for interstitials or `SASGMARewardedAdapter` for rewarded videos.
+
+5) If you intend to use keyword targeting in your Smart insertions, typically if you want it to match any custom targeting you have set-up on Google Ad Manager interface, you will need to set it on Google ad requests in your application.
+
+For Banner, Interstitial and Native-Ad, this is done by using `GADRequest`'s `keywords` attribut. For instance, for banner case, if your smart insertion uses "myCustomBannerTargeting" string on any Smart programmed banner insertion:
+```
+let request = GADRequest()
+request.keywords = ["myCustomBannerTargeting", "and", "additional", "keywords"]
+bannerView.load(request)
+```
+
+For Rewarded Video, this is done by registering extra on `GADRequest` instance using our `SASGMAAdNetworkExtra` class. For instance, if your smart insertion uses "myCustomTargeting" string on any Smart programmed rewarded video insertion:
+```
+let request = GADRequest()
+request.register(SASGMAAdNetworkExtra(keywords: ["myCustomTargeting", "and", "additional", "keywords"]))
+GADRewardedAd.load(withAdUnitID: "yourAddUnitID", request: request)
+```
+
+As you can see, in both solution you can set-up multiples keywords, they will be concatenated before making the ad call via _Smart Display SDK_.
+
 
 More infos
 ----------
