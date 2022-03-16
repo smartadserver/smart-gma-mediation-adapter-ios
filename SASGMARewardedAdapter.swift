@@ -1,6 +1,6 @@
 //
 //  SASGMARewardedAdapter.swift
-//  NewSample
+//  Adapter for Google Mobile Ad Mediation
 //
 //  Created by Guillaume Laubier on 09/09/2021.
 //
@@ -21,15 +21,11 @@ class SASGMARewardedAdapter : NSObject, GADMediationAdapter, GADMediationRewarde
     }
     
     static func adapterVersion() -> GADVersionNumber {
-        var version = GADVersionNumber()
-        version.majorVersion = SASGMAUtils.adapterVersion
-        return version
+        return SASGMAUtils.adapterVersion()
     }
     
     static func adSDKVersion() -> GADVersionNumber {
-        var version = GADVersionNumber()
-        version.majorVersion = 7
-        return version
+        return SASGMAUtils.adSDKVersion()
     }
     
     static func networkExtrasClass() -> GADAdNetworkExtras.Type? {
@@ -39,7 +35,7 @@ class SASGMARewardedAdapter : NSObject, GADMediationAdapter, GADMediationRewarde
     // Pragma - Adapter lifecycle
     
     func loadRewardedAd(for adConfiguration: GADMediationRewardedAdConfiguration, completionHandler: @escaping GADMediationRewardedLoadCompletionHandler) {
-        guard let placement = SASGMAUtils.placementWith(serverParameter: adConfiguration.credentials.settings["parameter"] as? String, request: nil, extras: adConfiguration.extras as? SASGMAAdNetworkExtras) else {
+        guard let placement = SASGMAUtils.placementWith(adConfiguration: adConfiguration) else {
             // Placement is invalid, sending an error
             let error = NSError(domain: SASGMAUtils.kSASGMAErrorDomain, code: SASGMAUtils.kSASGMAErrorCodeInvalidServerParameters, userInfo: nil)
             _ = completionHandler(nil, error)

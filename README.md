@@ -3,7 +3,7 @@ Smart AdServer - Google Mobile Ads SDK Adapter
 
 Introduction
 ------------
-The _Smart Display SDK_ can be used through _Google Mobile Ads SDK_ using the adapter provided in this repository for banner, interstitial and rewarded video. Those adapters are compatible with the _Smart Display SDK_ v7.14.
+The _Smart Display SDK_ can be used through _Google Mobile Ads SDK_ using the adapter provided in this repository for banner, interstitial and rewarded video. Those adapters are compatible with the _Smart Display SDK_ v7.15.
 
 Setup
 -----
@@ -15,15 +15,15 @@ Setup
 3) Checkout this repository and copy the files you need into your Xcode Project:
 
 - `SASGMAUtils` in any cases.
-- `SASGMACustomEventBanner` for banner ads.
-- `SASGMACustomEventInterstitial` for interstitial ads.
+- `SASGMABannerAdapter` for banner ads.
+- `SASGMAInterstitialAdapter` for interstitial ads.
 - `SASGMARewardedAdapter` for rewarded video ads.
-- `SASGMACustomEventNative` for native ads ads.
+- `SASGMANativeAdapter` for native ads ads.
 
 4) You can now declare _SDK Mediation Creatives_ in the _Google Mobile Ads_ interface. To setup the _Custom Event_ (under _Ad networks_), you need to fill:
 
 - the _Parameter_ field: set your _Smart AdServer_ IDs using slash separator `[siteID]/[pageID]/[formatID]`
-- the _Class Name_ field: set `SASGMACustomEventBanner` for banners, `SASGMACustomEventInterstitial` for interstitials or `SASGMARewardedAdapter` for rewarded videos.
+- the _Class Name_ field: set `SASGMABannerAdapter` for banners, `SASGMAInterstitialAdapter` for interstitials or `SASGMARewardedAdapter` for rewarded videos.
 
 5) If you intend to use keyword targeting in your Smart insertions, typically if you want it to match any custom targeting you have set-up on Google Ad Manager interface, you will need to set it on Google ad requests in your application.
 

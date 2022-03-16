@@ -1,22 +1,24 @@
 //
-//  SASGMACustomEventNative.swift
-//  NewSample
+//  SASGMANativeAdapter.swift
+//  Adapter for Google Mobile Ad Mediation
 //
-//  Created by Guillaume Laubier on 13/09/2021.
+//  Created by Julien Gomez on 03/03/2022.
 //
 
 import Foundation
 import SASDisplayKit
 import GoogleMobileAds
 
-class SASMediatedNativeAd : NSObject, GADMediatedUnifiedNativeAd, SASNativeAdDelegate {
+class SASMediatedNativeAd : NSObject, GADMediationNativeAd, SASNativeAdDelegate, SASNativeAdMediaViewDelegate {
     private let sasNativeAd: SASNativeAd
     private let sasNativeAdMediaView: SASNativeAdMediaView?
     private let sasAdChoicesView: SASAdChoicesView
     
+    var gadDelegate: GADMediationNativeAdEventDelegate?
+    
     private var mappedImages: [GADNativeAdImage]?
     
-    init(withNativeAd nativeAd: SASNativeAd) {
+    init(nativeAd: SASNativeAd) {
         sasNativeAd = nativeAd
         sasAdChoicesView = SASAdChoicesView()
         
@@ -146,10 +148,29 @@ class SASMediatedNativeAd : NSObject, GADMediatedUnifiedNativeAd, SASNativeAdDel
     
     func nativeAd(_ nativeAd: SASNativeAd, didClickWith URL: URL) {
         // Logging click to GMA
-        GADMediatedUnifiedNativeAdNotificationSource.mediatedNativeAdDidRecordClick(self)
+        gadDelegate?.reportClick()
+    }
+    
+    func nativeAdMediaView(_ mediaView: SASNativeAdMediaView, didSend videoEvent: SASVideoEvent) {
+        switch videoEvent {
+        case .start:
+            gadDelegate?.didPlayVideo()
+        case .pause:
+            gadDelegate?.didPauseVideo()
+        case .complete:
+            gadDelegate?.didEndVideo()
+        case .enterFullscreen:
+            gadDelegate?.willPresentFullScreenView()
+        case .exitFullscreen:
+            gadDelegate?.didDismissFullScreenView()
+        default:
+            break
+        }
     }
     
     func didRender(in view: UIView, clickableAssetViews: [GADNativeAssetIdentifier : UIView], nonclickableAssetViews: [GADNativeAssetIdentifier : UIView], viewController: UIViewController) {
+        // Set delegate to handle click report
+        sasNativeAd.delegate = self
         // Registering the rendering view on the native ad to handle clicks and impression automatically
         sasNativeAd.register(view, modalParentViewController: viewController)
         
@@ -159,10 +180,12 @@ class SASMediatedNativeAd : NSObject, GADMediatedUnifiedNativeAd, SASNativeAdDel
         // Registering media view if necessary
         if sasNativeAd.hasMedia {
             sasNativeAdMediaView?.registerNativeAd(sasNativeAd)
+            // Set mediaview delegate to handle video events
+            sasNativeAdMediaView?.delegate = self
         }
         
         // Logging impression to GMA
-        GADMediatedUnifiedNativeAdNotificationSource.mediatedNativeAdDidRecordImpression(self)
+        gadDelegate?.reportImpression()
     }
     
     func didUntrackView(_ view: UIView?) {
@@ -171,9 +194,11 @@ class SASMediatedNativeAd : NSObject, GADMediatedUnifiedNativeAd, SASNativeAdDel
     }
 }
 
-@objc(SASGMACustomEventNative)
-class SASGMACustomEventNative : NSObject, GADCustomEventNativeAd, SASNativeAdDelegate {
-    var delegate: GADCustomEventNativeAdDelegate?
+@objc(SASGMANativeAdapter)
+class SASGMANativeAdapter : NSObject, GADMediationAdapter {
+    
+    private var loadCompletionHandler: GADMediationNativeLoadCompletionHandler?
+    private var delegate: GADMediationNativeAdEventDelegate?
     
     private var nativeAdManager: SASNativeAdManager?
     private var nativeAd: SASNativeAd?
@@ -182,30 +207,27 @@ class SASGMACustomEventNative : NSObject, GADCustomEventNativeAd, SASNativeAdDel
     required override init() {
     }
     
-    func request(withParameter serverParameter: String, request: GADCustomEventRequest, adTypes: [Any], options: [Any], rootViewController: UIViewController) {
-        // Checking the native ad type and triggering error if not supported
-        guard adTypes.contains(where: { element in
-            if let type = element as? GADAdLoaderAdType {
-                return type == GADAdLoaderAdType.native
-            }
-            return false
-        }) else {
-            let description = "You must request the native ad format!"
-            var userInfo = [String: String]()
-            userInfo[NSLocalizedDescriptionKey] = description
-            userInfo[NSLocalizedFailureReasonErrorKey] = description
-            let error = NSError(domain: "com.google.mediation.sample", code: 0, userInfo: userInfo)
-            delegate?.customEventNativeAd(self, didFailToLoadWithError: error)
+    static func adapterVersion() -> GADVersionNumber {
+        return SASGMAUtils.adapterVersion()
+    }
+    
+    static func adSDKVersion() -> GADVersionNumber {
+        return SASGMAUtils.adSDKVersion()
+    }
+    
+    static func networkExtrasClass() -> GADAdNetworkExtras.Type? {
+        return SASGMAAdNetworkExtras.self
+    }
+    
+    func loadNativeAd(for adConfiguration: GADMediationNativeAdConfiguration, completionHandler: @escaping GADMediationNativeLoadCompletionHandler) {
+        guard let placement = SASGMAUtils.placementWith(adConfiguration: adConfiguration) else {
+            // Placement is invalid, sending an error
+            let error = NSError(domain: SASGMAUtils.kSASGMAErrorDomain, code: SASGMAUtils.kSASGMAErrorCodeInvalidServerParameters, userInfo: nil)
+            _ = completionHandler(nil, error)
             return
         }
         
-        // Placement parsing from the server string
-        guard let placement = SASGMAUtils.placementWith(serverParameter: serverParameter, request: request, extras: nil) else {
-            // Placement is invalid, sending an error
-            let error = NSError(domain: SASGMAUtils.kSASGMAErrorDomain, code: SASGMAUtils.kSASGMAErrorCodeInvalidServerParameters, userInfo: nil)
-            delegate?.customEventNativeAd(self, didFailToLoadWithError: error)
-            return
-        }
+        loadCompletionHandler = completionHandler
         
         // Native ad manager instantiation
         nativeAdManager = SASNativeAdManager(placement: placement)
@@ -214,30 +236,23 @@ class SASGMACustomEventNative : NSObject, GADCustomEventNativeAd, SASNativeAdDel
         nativeAdManager?.requestAd({ nativeAd, error in
             if let nativeAd = nativeAd {
                 // Process ad
-                self.mediatedNativeAd = SASMediatedNativeAd(withNativeAd: nativeAd)
+                self.mediatedNativeAd = SASMediatedNativeAd(nativeAd: nativeAd)
                 self.mediatedNativeAd?.fetchAssetsIfNeeded(withCompletionHandler: { error in
                     if let error = error {
-                        self.delegate?.customEventNativeAd(self, didFailToLoadWithError: error)
+                        _ = self.loadCompletionHandler?(nil, error)
                     } else {
-                        self.delegate?.customEventNativeAd(self, didReceive: self.mediatedNativeAd!)
+                        self.delegate = self.loadCompletionHandler?(self.mediatedNativeAd!, nil)
+                        self.mediatedNativeAd?.gadDelegate = self.delegate
                     }
                 })
             } else if let error = error {
                 // Reporting ad loading failure to GAM
-                self.delegate?.customEventNativeAd(self, didFailToLoadWithError: error)
+                _ = self.loadCompletionHandler?(nil, error)
             } else {
                 let error = NSError(domain: SASGMAUtils.kSASGMAErrorDomain, code: SASGMAUtils.kSASGMAErrorCodeFailToLoadNativeAd, userInfo: nil)
-                self.delegate?.customEventNativeAd(self, didFailToLoadWithError: error)
+                _ = self.loadCompletionHandler?(nil, error)
             }
         })
-        
-    }
-    
-    func handlesUserClicks() -> Bool {
-        return true
-    }
-    
-    func handlesUserImpressions() -> Bool {
-        return true
+
     }
 }
