@@ -5,7 +5,7 @@ Introduction
 ------------
 The _Smart Display SDK_ can be used through _Google Mobile Ads SDK_ using the adapter provided in this repository for banner, interstitial and rewarded video. Those adapters are compatible with:
 * _Smart Display SDK_ v7.21+
-* _Google Mobile Ads SDK_ v10.6.0
+* _Google Mobile Ads SDK_ v11.5.0
 
 Setup
 -----

@@ -82,8 +82,7 @@ class SASGMARewardedAdapter : NSObject, GADMediationAdapter, GADMediationRewarde
     }
     
     func rewardedVideoManager(_ manager: SASRewardedVideoManager, didCollect reward: SASReward) {
-        let gadReward = GADAdReward(rewardType: reward.currency, rewardAmount: NSDecimalNumber(nonretainedObject: reward.amount))
-        delegate?.didRewardUser(with: gadReward)
+        delegate?.didRewardUser()
     }
     
     func rewardedVideoManager(_ manager: SASRewardedVideoManager, didClickWith URL: URL) {
