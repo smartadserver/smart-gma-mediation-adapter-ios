@@ -2,7 +2,7 @@
 //  SASGMAUtils.swift
 //  Adapter for Google Mobile Ad Mediation
 //
-//  Created by Guillaume Laubier on 09/09/2021.
+//  Created by Guillaume Laubier on 22/01/2024.
 //
 
 import Foundation
@@ -20,6 +20,9 @@ class SASGMAAdNetworkExtras: NSObject, GADAdNetworkExtras {
 }
 
 class SASGMAUtils {
+    
+    static let SASImplementationInfo_PrimarySDKName             = "GoogleMobileAds"
+    static let SASImplementationInfo_MediationAdapterVersion    = "2.0.0"
     
     static private let customEventServerSeparatorString = "/"
     
@@ -46,7 +49,7 @@ class SASGMAUtils {
         }
         
         var siteId = 0
-        var pageId: String? = nil
+        var pageId = 0
         var formatId = 0
         
         // Processing the server parameter string
@@ -57,7 +60,7 @@ class SASGMAUtils {
                 siteId = Int(string) ?? 0
                 break
             case 1:
-                pageId = string
+                pageId = Int(string) ?? 0
                 break
             case 2:
                 formatId = Int(string) ?? 0
@@ -68,7 +71,7 @@ class SASGMAUtils {
         }
         
         // Rejecting invalid parameters
-        if (siteId == 0 || pageId == nil || pageId?.count == 0 || formatId == 0) {
+        if (siteId == 0 || pageId == 0 || formatId == 0) {
             return nil
         }
         
@@ -79,12 +82,14 @@ class SASGMAUtils {
             targetingString = extras.keywords.joined(separator: ";")
         }
         
-        // Configure the Smart Display SDK
-        SASConfiguration.shared.configure(siteId: siteId)
-        SASConfiguration.shared.primarySDK = false
-    
+        // Configure the Equativ Display SDK
+        SASConfiguration.shared.configure()
+        SASConfiguration.shared.secondaryImplementationInfo = SASSecondaryImplementationInfo(primarySDKName: SASImplementationInfo_PrimarySDKName,
+                                                                                             primarySDKVersion: GADGetStringFromVersionNumber(GADMobileAds.sharedInstance().versionNumber),
+                                                                                             mediationAdapterVersion: SASImplementationInfo_MediationAdapterVersion)
+        
         // Ad placement instantiation
-        return SASAdPlacement(siteId: siteId, pageName: pageId!, formatId: formatId, keywordTargeting: targetingString)
+        return SASAdPlacement(siteId: siteId, pageId: pageId, formatId: formatId, keywordTargeting: targetingString)
     }
     
     @available(*, deprecated, message: "use placementWith(adConfiguration: GADMediationAdConfiguration) instead")
@@ -94,7 +99,7 @@ class SASGMAUtils {
         }
         
         var siteId = 0
-        var pageId: String? = nil
+        var pageId = 0
         var formatId = 0
         
         // Processing the server parameter string
@@ -105,7 +110,7 @@ class SASGMAUtils {
                 siteId = Int(string) ?? 0
                 break
             case 1:
-                pageId = string
+                pageId = Int(string) ?? 0
                 break
             case 2:
                 formatId = Int(string) ?? 0
@@ -116,7 +121,7 @@ class SASGMAUtils {
         }
         
         // Rejecting invalid parameters
-        if (siteId == 0 || pageId == nil || pageId?.count == 0 || formatId == 0) {
+        if (siteId == 0 || pageId == 0 || formatId == 0) {
             return nil
         }
         
@@ -133,12 +138,14 @@ class SASGMAUtils {
             targetingString = extras.keywords.joined(separator: ";")
         }
         
-        // Configure the Smart Display SDK
-        SASConfiguration.shared.configure(siteId: siteId)
-        SASConfiguration.shared.primarySDK = false
+        // Configure the Equativ Display SDK
+        SASConfiguration.shared.configure()
+        SASConfiguration.shared.secondaryImplementationInfo = SASSecondaryImplementationInfo(primarySDKName: SASImplementationInfo_PrimarySDKName, 
+                                                                                             primarySDKVersion: GADGetStringFromVersionNumber(GADMobileAds.sharedInstance().versionNumber),
+                                                                                             mediationAdapterVersion: SASImplementationInfo_MediationAdapterVersion)
     
         // Ad placement instantiation
-        return SASAdPlacement(siteId: siteId, pageName: pageId!, formatId: formatId, keywordTargeting: targetingString)
+        return SASAdPlacement(siteId: siteId, pageId: pageId, formatId: formatId, keywordTargeting: targetingString)
     }
     
 }
