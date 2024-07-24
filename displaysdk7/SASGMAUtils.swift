@@ -22,7 +22,10 @@ class SASGMAAdNetworkExtras: NSObject, GADAdNetworkExtras {
 class SASGMAUtils {
     
     static let SASImplementationInfo_PrimarySDKName             = "GoogleMobileAds"
-    static let SASImplementationInfo_MediationAdapterVersion    = "1.1.0"
+    static let SASImplementationInfo_MediationAdapterVersion_Major    = 1
+    static let SASImplementationInfo_MediationAdapterVersion_Minor    = 1
+    static let SASImplementationInfo_MediationAdapterVersion_Patch    = 0
+    static let adaptersVersionString = "\(SASImplementationInfo_MediationAdapterVersion_Major).\(SASImplementationInfo_MediationAdapterVersion_Minor).\(SASImplementationInfo_MediationAdapterVersion_Patch)"
     
     static private let customEventServerSeparatorString = "/"
     
@@ -32,15 +35,18 @@ class SASGMAUtils {
     static let kSASGMAErrorCodeFailToLoadNativeAd = 102
     
     static func adapterVersion() -> GADVersionNumber {
-        return GADVersionNumber.init(majorVersion: 3, minorVersion: 0, patchVersion: 0)
+        return GADVersionNumber.init(majorVersion: SASImplementationInfo_MediationAdapterVersion_Major,
+                                     minorVersion: SASImplementationInfo_MediationAdapterVersion_Minor,
+                                     patchVersion: SASImplementationInfo_MediationAdapterVersion_Patch)
     }
     
     static func adSDKVersion() -> GADVersionNumber {
         let versions = SASFrameworkInfo.shared.frameworkVersionString.components(separatedBy: ".")
-        guard versions.count == 3 else {
-            return GADVersionNumber.init(majorVersion: 7, minorVersion: 0, patchVersion: 0)
-        }
-        return GADVersionNumber.init(majorVersion: Int(versions[0]) ?? 7, minorVersion: Int(versions[1]) ?? 0, patchVersion: Int(versions[2]) ?? 0)
+        let majorVersion = versions.indices.contains(0) ? Int(versions[0]) ?? 0 : 0
+        let minorVersion = versions.indices.contains(1) ? Int(versions[1]) ?? 0 : 0
+        let patchVersion = versions.indices.contains(2) ? Int(versions[2]) ?? 0 : 0
+        
+        return GADVersionNumber.init(majorVersion: majorVersion, minorVersion: minorVersion, patchVersion: patchVersion)
     }
     
     static func placementWith(adConfiguration: GADMediationAdConfiguration) -> SASAdPlacement? {
@@ -86,7 +92,7 @@ class SASGMAUtils {
         SASConfiguration.shared.configure(siteId: siteId)
         SASConfiguration.shared.secondaryImplementationInfo = SASSecondaryImplementationInfo(primarySDKName: SASImplementationInfo_PrimarySDKName,
                                                                                              primarySDKVersion: GADGetStringFromVersionNumber(GADMobileAds.sharedInstance().versionNumber),
-                                                                                             mediationAdapterVersion: SASImplementationInfo_MediationAdapterVersion)
+                                                                                             mediationAdapterVersion: adaptersVersionString)
     
         // Ad placement instantiation
         return SASAdPlacement(siteId: siteId, pageName: pageId!, formatId: formatId, keywordTargeting: targetingString)
