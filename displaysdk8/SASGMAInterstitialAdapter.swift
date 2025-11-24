@@ -32,7 +32,7 @@ class SASGMAInterstitialAdapter : NSObject, GADMediationAdapter, GADMediationInt
         return SASGMAAdNetworkExtras.self
     }
     
-    // Pragma - Adapter lifecycle
+    // MARK: - Adapter lifecycle
     
     func loadInterstitial(for adConfiguration: GADMediationInterstitialAdConfiguration, completionHandler: @escaping GADMediationInterstitialLoadCompletionHandler) {
         guard let placement = SASGMAUtils.placementWith(adConfiguration: adConfiguration) else {
@@ -59,26 +59,26 @@ class SASGMAInterstitialAdapter : NSObject, GADMediationAdapter, GADMediationInt
         }
     }
     
-    // Pragma - SASInterstitialManager implementation
+    // MARK: - SASInterstitialManager implementation
     
     func interstitialManager(_ interstitialManager: SASInterstitialManager, didLoadWith adInfo: SASAdInfo) {
         delegate = loadCompletionHandler?(self, nil)
     }
     
-    func interstitialManager(_ interstitialManager: SASInterstitialManager, didFailToLoad error: Error) {
+    func interstitialManager(_ interstitialManager: SASInterstitialManager, didFailToLoad error: any Error) {
         _ = loadCompletionHandler?(nil, error)
     }
     
-    func interstitialManager(_ manager: SASInterstitialManager, didAppearFrom viewController: UIViewController) {
+    func interstitialManagerDidShow(_ interstitialManager: SASInterstitialManager) {
         delegate?.willPresentFullScreenView()
         delegate?.reportImpression()
     }
     
-    func interstitialManager(_ manager: SASInterstitialManager, didDisappearFrom viewController: UIViewController) {
+    func interstitialManagerDidClose(_ interstitialManager: SASInterstitialManager) {
         delegate?.willDismissFullScreenView()
     }
     
-    func interstitialManager(_ manager: SASInterstitialManager, didClickWith URL: URL) {
+    func interstitialManagerClicked(_ interstitialManager: SASInterstitialManager) {
         delegate?.reportClick()
     }
 }

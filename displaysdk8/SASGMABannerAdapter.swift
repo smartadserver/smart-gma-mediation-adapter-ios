@@ -51,26 +51,26 @@ class SASGMABannerAdapter : NSObject, GADMediationAdapter, GADMediationBannerAd,
         }
     }
     
-    // Pragma - SASBannerViewDelegate implementation
+    // MARK: - SASBannerViewDelegate implementation
     
     func bannerView(_ bannerView: SASBannerView, didLoadWith adInfo: SASAdInfo) {
         delegate = loadCompletionHandler?(self, nil)
         self.delegate?.reportImpression()
     }
     
-    func bannerView(_ bannerView: SASBannerView, didFailToLoad error: Error) {
+    func bannerView(_ bannerView: SASBannerView, didFailToLoad error: any Error) {
         _ = loadCompletionHandler?(nil, error)
     }
     
-    func bannerView(_ bannerView: SASBannerView, didClickWith URL: URL) {
+    func bannerViewClicked(_ bannerView: SASBannerView) {
         delegate?.reportClick()
     }
     
-    func bannerViewWillPresentModalView(_ bannerView: SASBannerView) {
+    func bannerViewDidExpand(_ bannerView: SASBannerView) {
         delegate?.willPresentFullScreenView()
     }
     
-    func bannerViewWillDismissModalView(_ bannerView: SASBannerView) {
+    func bannerViewDidCollapse(_ bannerView: SASBannerView) {
         delegate?.willDismissFullScreenView()
     }
     
