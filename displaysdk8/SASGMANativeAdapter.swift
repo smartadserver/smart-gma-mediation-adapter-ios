@@ -9,13 +9,13 @@ import Foundation
 import SASDisplayKit
 import GoogleMobileAds
 
-class SASMediatedNativeAd : NSObject, GADMediationNativeAd {
-    var gadDelegate: GADMediationNativeAdEventDelegate?
+class SASMediatedNativeAd : NSObject, MediationNativeAd {
+    var gadDelegate: MediationNativeAdEventDelegate?
     
     private let sasNativeAdView: SASNativeAdView
     private let sasNativeAdAssets: SASNativeAdAssets
 
-    private var mappedImages: [GADNativeAdImage]?
+    private var mappedImages: [NativeAdImage]?
     
     init(nativeAdView: SASNativeAdView, nativeAdAssets: SASNativeAdAssets, customerFeedbackButtonContainer: UIView?) {
         sasNativeAdView = nativeAdView
@@ -46,9 +46,9 @@ class SASMediatedNativeAd : NSObject, GADMediationNativeAd {
         return sasNativeAdAssets.title
     }
     
-    var icon: GADNativeAdImage?
+    var icon: NativeAdImage?
     
-    var images: [GADNativeAdImage]? {
+    var images: [NativeAdImage]? {
         return mappedImages
     }
     
@@ -88,7 +88,7 @@ class SASMediatedNativeAd : NSObject, GADMediationNativeAd {
             let dataTask = URLSession.shared.dataTask(with: iconUrl) { data, _, _ in
                 if let data = data,
                    let iconImage = UIImage(data: data) {
-                    self.icon = GADNativeAdImage(image: iconImage)
+                    self.icon = NativeAdImage(image: iconImage)
                 } else {
                     errorOccured = true
                 }
@@ -104,7 +104,7 @@ class SASMediatedNativeAd : NSObject, GADMediationNativeAd {
             let dataTask = URLSession.shared.dataTask(with: mainViewUrl) { data, _, _ in
                 if let data = data,
                    let mainViewImage = UIImage(data: data) {
-                    self.mappedImages = [GADNativeAdImage(image: mainViewImage)]
+                    self.mappedImages = [NativeAdImage(image: mainViewImage)]
                 } else {
                     errorOccured = true
                 }
@@ -128,12 +128,12 @@ class SASMediatedNativeAd : NSObject, GADMediationNativeAd {
 }
 
 @objc(SASGMANativeAdapter)
-class SASGMANativeAdapter : NSObject, GADMediationAdapter, SASNativeAdViewDelegate {
+class SASGMANativeAdapter : NSObject, MediationAdapter, SASNativeAdViewDelegate {
     private var nativeAdView: SASNativeAdView
     private var nativeAdAssets: SASNativeAdAssets?
     
     private var loadCompletionHandler: GADMediationNativeLoadCompletionHandler?
-    private var delegate: GADMediationNativeAdEventDelegate?
+    private var delegate: MediationNativeAdEventDelegate?
     
     private var mediatedNativeAd: SASMediatedNativeAd?
     
@@ -145,19 +145,19 @@ class SASGMANativeAdapter : NSObject, GADMediationAdapter, SASNativeAdViewDelega
         super.init()
     }
     
-    static func adapterVersion() -> GADVersionNumber {
+    static func adapterVersion() -> VersionNumber {
         return SASGMAUtils.adapterVersion()
     }
     
-    static func adSDKVersion() -> GADVersionNumber {
+    static func adSDKVersion() -> VersionNumber {
         return SASGMAUtils.adSDKVersion()
     }
     
-    static func networkExtrasClass() -> GADAdNetworkExtras.Type? {
+    static func networkExtrasClass() -> AdNetworkExtras.Type? {
         return SASGMAAdNetworkExtras.self
     }
     
-    func loadNativeAd(for adConfiguration: GADMediationNativeAdConfiguration, completionHandler: @escaping GADMediationNativeLoadCompletionHandler) {
+    func loadNativeAd(for adConfiguration: MediationNativeAdConfiguration, completionHandler: @escaping GADMediationNativeLoadCompletionHandler) {
         guard let placement = SASGMAUtils.placementWith(adConfiguration: adConfiguration) else {
             // Placement is invalid, sending an error
             let error = NSError(domain: SASGMAUtils.kSASGMAErrorDomain, code: SASGMAUtils.kSASGMAErrorCodeInvalidServerParameters, userInfo: nil)

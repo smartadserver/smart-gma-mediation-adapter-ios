@@ -10,31 +10,31 @@ import SASDisplayKit
 import GoogleMobileAds
 
 @objc(SASGMAInterstitialAdapter)
-class SASGMAInterstitialAdapter : NSObject, GADMediationAdapter, GADMediationInterstitialAd, SASInterstitialManagerDelegate {
+class SASGMAInterstitialAdapter : NSObject, MediationAdapter, MediationInterstitialAd, SASInterstitialManagerDelegate {
     
     private var interstitialManager: SASInterstitialManager?
     
     private var loadCompletionHandler: GADMediationInterstitialLoadCompletionHandler?
-    private var delegate: GADMediationInterstitialAdEventDelegate?
+    private var delegate: MediationInterstitialAdEventDelegate?
     
     required override init() {
     }
     
-    static func adapterVersion() -> GADVersionNumber {
+    static func adapterVersion() -> VersionNumber {
         return SASGMAUtils.adapterVersion()
     }
     
-    static func adSDKVersion() -> GADVersionNumber {
+    static func adSDKVersion() -> VersionNumber {
         return SASGMAUtils.adSDKVersion()
     }
     
-    static func networkExtrasClass() -> GADAdNetworkExtras.Type? {
+    static func networkExtrasClass() -> AdNetworkExtras.Type? {
         return SASGMAAdNetworkExtras.self
     }
     
     // MARK: - Adapter lifecycle
     
-    func loadInterstitial(for adConfiguration: GADMediationInterstitialAdConfiguration, completionHandler: @escaping GADMediationInterstitialLoadCompletionHandler) {
+    func loadInterstitial(for adConfiguration: MediationInterstitialAdConfiguration, completionHandler: @escaping GADMediationInterstitialLoadCompletionHandler) {
         guard let placement = SASGMAUtils.placementWith(adConfiguration: adConfiguration) else {
             // Placement is invalid, sending an error
             let error = NSError(domain: SASGMAUtils.kSASGMAErrorDomain, code: SASGMAUtils.kSASGMAErrorCodeInvalidServerParameters, userInfo: nil)

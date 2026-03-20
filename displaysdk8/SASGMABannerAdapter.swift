@@ -10,28 +10,28 @@ import SASDisplayKit
 import GoogleMobileAds
 
 @objc(SASGMABannerAdapter)
-class SASGMABannerAdapter : NSObject, GADMediationAdapter, GADMediationBannerAd, SASBannerViewDelegate {
+class SASGMABannerAdapter : NSObject, MediationAdapter, MediationBannerAd, SASBannerViewDelegate {
     var view: UIView
     private var loadCompletionHandler: GADMediationBannerLoadCompletionHandler?
-    private var delegate: GADMediationBannerAdEventDelegate?
+    private var delegate: MediationBannerAdEventDelegate?
     
     required override init() {
         view = SASBannerView(frame: CGRect.zero) as UIView
     }
     
-    static func adapterVersion() -> GADVersionNumber {
+    static func adapterVersion() -> VersionNumber {
         return SASGMAUtils.adapterVersion()
     }
     
-    static func adSDKVersion() -> GADVersionNumber {
+    static func adSDKVersion() -> VersionNumber {
         return SASGMAUtils.adSDKVersion()
     }
     
-    static func networkExtrasClass() -> GADAdNetworkExtras.Type? {
+    static func networkExtrasClass() -> AdNetworkExtras.Type? {
         return SASGMAAdNetworkExtras.self
     }
     
-    func loadBanner(for adConfiguration: GADMediationBannerAdConfiguration, completionHandler: @escaping GADMediationBannerLoadCompletionHandler) {
+    func loadBanner(for adConfiguration: MediationBannerAdConfiguration, completionHandler: @escaping GADMediationBannerLoadCompletionHandler) {
         guard let placement = SASGMAUtils.placementWith(adConfiguration: adConfiguration) else {
             // Placement is invalid, sending an error
             let error = NSError(domain: SASGMAUtils.kSASGMAErrorDomain, code: SASGMAUtils.kSASGMAErrorCodeInvalidServerParameters, userInfo: nil)
